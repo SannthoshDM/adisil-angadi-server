@@ -36,13 +36,17 @@ public class OrderService {
 //    CREATING ORDER FROM USER SIDE
     public Order createOrder(OrderRequest orderRequest, User user) throws Exception
     {
-        Address shippingAddress = orderRequest.getDeliveryAddress();
-        Address savedAddress = addressRepository.save(shippingAddress);
-
-        if(!user.getAddresses().contains(savedAddress))
+        Optional<Address> deliveryAddress = addressRepository.findById(orderRequest.getAddressId());
+//        Address savedAddress = addressRepository.save(shippingAddress);
+//
+//        if(!user.getAddresses().contains(savedAddress))
+//        {
+//            user.getAddresses().add(savedAddress);
+//            userRepository.save(user);
+//        }
+        if(deliveryAddress.isEmpty())
         {
-            user.getAddresses().add(savedAddress);
-            userRepository.save(user);
+            throw new Exception("Address not found. Unable to Process the request");
         }
 
         Restaurant restaurant = restaurantService.findRestaurantById(orderRequest.getRestaurantId());
@@ -51,7 +55,7 @@ public class OrderService {
         createdOrder.setCustomer(user);
         createdOrder.setCreatedAt(new Date());
         createdOrder.setOrderStatus("PENDING");
-        createdOrder.setDeliveryAddress(savedAddress);
+        createdOrder.setDeliveryAddress(deliveryAddress.get());
         createdOrder.setRestaurant(restaurant);
 
         Cart cart = cartService.findCartByUserId(user.getId());

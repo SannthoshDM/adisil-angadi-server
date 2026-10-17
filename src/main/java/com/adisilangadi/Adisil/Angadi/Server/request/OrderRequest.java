@@ -7,6 +7,6 @@ import lombok.Data;
 public class OrderRequest {
 
     private Long restaurantId;
-    private Address deliveryAddress;
+    private Long addressId;
     private Long totalBillAmount;
 }

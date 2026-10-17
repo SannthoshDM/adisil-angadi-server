@@ -1,5 +1,7 @@
 package com.adisilangadi.Adisil.Angadi.Server.service;
 
+import com.adisilangadi.Adisil.Angadi.Server.model.Address;
+import com.adisilangadi.Adisil.Angadi.Server.repository.AddressRepository;
 import com.adisilangadi.Adisil.Angadi.Server.request.SignupRequest;
 import com.adisilangadi.Adisil.Angadi.Server.model.USER_ROLE;
 import com.adisilangadi.Adisil.Angadi.Server.model.User;
@@ -16,12 +18,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AddressRepository addressRepository;
 
     @Autowired
-    public UserService(UserRepository repository, PasswordEncoder encoder,JwtService jwtService) {
+    public UserService(UserRepository repository, PasswordEncoder encoder,JwtService jwtService,AddressRepository addressRepository) {
         this.userRepository = repository;
         this.passwordEncoder = encoder;
         this.jwtService = jwtService;
+        this.addressRepository = addressRepository;
     }
 
 
@@ -87,5 +91,24 @@ public class UserService {
     public User findByEmail(String email)
     {
         return userRepository.findByEmail(email);
+    }
+
+    public Address addUserAddress(Address userAddress,User user) throws Exception
+    {
+        try
+        {
+            System.out.println("INSIDE ADD USER ADDRESS ...................");
+            Address savedAddress = addressRepository.save(userAddress);
+
+            if(!user.getAddresses().contains(savedAddress))
+            {
+                user.getAddresses().add(savedAddress);
+                userRepository.save(user);
+            }
+
+            return savedAddress;
+        } catch (Exception e) {
+            throw new Exception("Unable to add User Address...");
+        }
     }
 }

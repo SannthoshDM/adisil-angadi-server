@@ -124,6 +124,7 @@ public class RestaurantService {
        dto.setTitle(restaurant.getName());
        dto.setDescription(restaurant.getDescription());
        dto.setImages(restaurant.getImages());
+       dto.setOpen(restaurant.isOpen());
 
 //       if(user.getFavorites().contains(dto))
 //       {
